@@ -2,12 +2,32 @@ import React, { Component } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { purple, white, gray } from '../utils/colors';
+import { receiveDecks } from '../actions'
+import { fetchDecks } from '../utils/api';
 import DecksCard from './DecksCard';
+import { AppLoading } from 'expo'
 
 class Decks extends Component {
+	state = {
+    ready: false,
+  }
+
+	componentDidMount(){
+		const {dispatch} = this.props;
+
+		fetchDecks()
+			.then((decks) => dispatch(fetchDecks(decks)))
+			.then(() => this.setState(() => ({ready: true})))
+	}
 
 	render() {
 		const { decks } = this.props;
+		const { ready } = this.state;
+
+		if(!ready){
+			return <AppLoading />
+		}
+
 		return (
 			<View style={styles.container}>
 					{Object.keys(decks).map(deck=>(
@@ -36,11 +56,9 @@ const styles = StyleSheet.create({
 	}
 })
 
-function mapStateToProps(state) {
+function mapStateToProps(decks) {
 	return {
-		decks: {
-			...state
-		}
+		decks
 	}
 }
 

@@ -14,7 +14,7 @@ export default class App extends React.Component {
 		return (
 			<Provider store={this.store}>
 				<ScrollView style={{flex: 1}}>
-					<Exam />
+					<Decks />
 				</ScrollView>
 			</Provider>
     	)
