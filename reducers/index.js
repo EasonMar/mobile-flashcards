@@ -5,9 +5,10 @@ function deck(state = {}, action) {
     case RECEIVE_DECKS :
       return action.decks
     case ADD_DECK :
+    const { deck } = action;
       return {
         ...state,
-        action.deck
+        [deck.title]: deck
       }
     case ADD_CARD :
       const {title} = action;
