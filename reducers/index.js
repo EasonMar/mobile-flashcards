@@ -5,7 +5,7 @@ function deck(state = {}, action) {
     case RECEIVE_DECKS :
       return action.decks
     case ADD_DECK :
-    const { deck } = action;
+      const { deck } = action;
       return {
         ...state,
         [deck.title]: deck
@@ -18,7 +18,7 @@ function deck(state = {}, action) {
           ...state[title],
           questions: [
             ...state[title].questions,
-            action.card
+            action.question
           ]
         }
       }

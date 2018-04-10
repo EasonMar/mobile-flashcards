@@ -5,17 +5,46 @@ import DecksCard from './DecksCard';
 import TextButton from './TextButton';
 import { purple, white } from '../utils/colors'
 
+import { AppLoading } from 'expo';
+import { receiveDecks } from '../actions';
+import { fetchDecks } from '../utils/api';
+
 class DeckHome extends Component {
 
-	// navigation
+	// 主要是navigation
 
+	// 这部分在实际中不需要~！
+	state = {
+		ready: false
+	} 
+	
+	componentDidMount(){
+		const {dispatch} = this.props;
+
+		fetchDecks()
+			.then((decks) => dispatch(receiveDecks(decks)))
+			.then(() => this.setState(() => ({ready: true})))
+	} 
+	
 	render() {
+		// ready这部分在实际中不需要~！
+		const { ready } = this.state;
+		if(!ready){
+			return <AppLoading />
+		}
+
+		const {card} = this.props;
+
 		return(
 			<View style={styles.container}>
-				<DecksCard title={'Javascript'} cardNum={2} />
+				<DecksCard title={card.title} cardNum={card.questions.length} />
 				<View style={styles.buttomArea}>
 					<TextButton style={styles.add}>Add card</TextButton>
-					<TextButton style={styles.quiz}>Start Quiz</TextButton>
+					{
+						card.questions.length > 0
+						? <TextButton style={styles.quiz}>Start Quiz</TextButton>
+						: ''
+					}
 				</View>
 			</View>
 		)
@@ -42,4 +71,11 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect()(DeckHome);
+function mapStateToProps (decks) {
+	// 需要通过导航传递卡片title,获取对应的问题集
+	return {
+		card: decks['JavaScript']
+	}
+}
+
+export default connect(mapStateToProps)(DeckHome);

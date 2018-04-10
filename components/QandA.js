@@ -5,7 +5,7 @@ import { red } from '../utils/colors';
 export default function QandA ({title, cont, onPress}) {
 	return(
 		<View style={styles.center}>
-			<Text style={{fontSize: 25}}>
+			<Text style={{fontSize: 25,color: red}}>
         {title}
       </Text>
       <TouchableOpacity onPress={onPress}>
@@ -26,6 +26,11 @@ const styles = StyleSheet.create({
   cont: {
   	fontSize: 14, 
   	color: red,
-  	marginTop: 10
+  	marginTop: 50,
+    padding: 10,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderStyle: 'solid', 
+    borderColor: red
   }
 })

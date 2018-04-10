@@ -5,7 +5,7 @@ import { purple, white, gray } from '../utils/colors';
 import { receiveDecks } from '../actions'
 import { fetchDecks } from '../utils/api';
 import DecksCard from './DecksCard';
-import { AppLoading } from 'expo'
+import { AppLoading } from 'expo';
 
 class Decks extends Component {
 	state = {
