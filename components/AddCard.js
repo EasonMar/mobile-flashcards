@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { addCard, receiveDecks } from '../actions';
 import TextButton from './TextButton';
 import { postCard } from '../utils/api';
-import { trim } from '../utils/helper';
+import { trim } from '../utils/helpers';
 import { gray, purple, white } from '../utils/colors';
 
 import { fetchDecks } from '../utils/api';
@@ -15,11 +15,10 @@ class AddCard extends Component {
 		answer: 'YES'
 	}
 
-	submit() {
-		// 需要通过导航传递卡片title
-		const title = 'React';
-		
+	submit() {		
 		const { card, dispatch } = this.props;
+		// 需要通过导航传递卡片title
+		const title = card.title;
 		const { answer } = this.state;
 		const question = trim(this.state.question);
 
@@ -29,29 +28,26 @@ class AddCard extends Component {
 			return false;
 		}
 
+		if(card.questions.find((el)=> (el.question===question))){
+			alert('Question already exist!')
+			return false;
+		}
 
 		// update DB
 		postCard(title, {
 			question,
 			answer
 		})
-		
-		
+
 		// update redux
 		dispatch(addCard(title, {
 			question,
 			answer
 		}))
 		
-		// navigation
-	}
-
-	// 这部分在实际中不需要~！
-	componentDidMount(){
-		const {dispatch} = this.props;
-
-		fetchDecks()
-			.then((decks) => dispatch(receiveDecks(decks)))
+		// 失焦
+		this.refs.queInput.blur();
+		this.setState({question: ''});
 	}
 
 	render(){
@@ -59,6 +55,7 @@ class AddCard extends Component {
 			<View style={styles.container}>
 				<Text style={{fontSize: 20, textAlign: 'center'}}>What is the question of your new Card?</Text>
 				<TextInput
+					ref="queInput"
 					style={styles.input}
 					placeholder={"Enter question"}
 					onChangeText={(question) => this.setState({question})}
@@ -76,8 +73,6 @@ class AddCard extends Component {
 					style={styles.submit}
 					onPress={()=> this.submit()}
 				>Submit</TextButton>
-
-				<Text style={{marginTop:20}}>{JSON.stringify(this.props.card)}</Text>
 			</View>
 		)
 	}
@@ -114,10 +109,11 @@ const styles = StyleSheet.create({
   }
 });
 
-function mapStateToProps (decks) {
+function mapStateToProps (decks, { navigation }) {
 	// 需要通过导航传递卡片title
+	const {title} = navigation.state.params;
 	return {
-		card: decks['React']
+		card: decks[title]
 	}
 }
 

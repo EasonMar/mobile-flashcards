@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { ScrollView, TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { purple, white, gray } from '../utils/colors';
 import { receiveDecks } from '../actions'
@@ -29,13 +29,24 @@ class Decks extends Component {
 		}
 
 		return (
-			<View style={styles.container}>
-					{Object.keys(decks).map(deck=>(
-						<TouchableOpacity key={deck} style={styles.item} onPress={console.log('navigation')}>
-							<DecksCard title={decks[deck].title} cardNum={decks[deck].questions.length} />
-						</TouchableOpacity>
-					))}
-			</View>
+			<ScrollView style={styles.container}>
+				{Object.keys(decks).map(deck=>(
+					<TouchableOpacity 
+						key={deck} 
+						style={styles.item} 
+						onPress={()=> this.props.navigation.navigate(
+							'DeckHome', 
+							{ title: deck }
+						)}
+					>
+						<DecksCard title={deck} cardNum={decks[deck].questions.length} />
+					</TouchableOpacity>
+				))}
+				{
+					// 应该用样式调整,不该用占位div --- 赶时间,先不处理了
+				}
+				<View style={{height: 50}}></View>
+			</ScrollView>
 		)
 	}
 }

@@ -3,11 +3,9 @@ import { View, StyleSheet, Animated, Dimensions, Text } from 'react-native';
 import { connect } from 'react-redux';
 import TextButton from './TextButton';
 import QandA from './QandA';
+import { setLocalNotification, clearLocalNotification } from '../utils/helpers';
 import { red, white, green, purple } from '../utils/colors';
-import { AppLoading } from 'expo';
 
-import { receiveDecks } from '../actions';
-import { fetchDecks } from '../utils/api';
 
 class Exam extends Component {
 
@@ -45,28 +43,18 @@ class Exam extends Component {
 		}
 	}
 
-	// 这部分在实际中不需要~！
-	componentDidMount(){
-		const {dispatch} = this.props;
-		fetchDecks()
-			.then((decks) => dispatch(receiveDecks(decks)))
-			.then(() => this.setState(() => ({ready: true})))
-	}
-
 	render() {
-		// ready这部分在实际中不需要~！
-		const { ready, count, finish, rightCount} = this.state;
-		
-		if(!ready){
-			return <AppLoading />
-		}
+
+		const { count, finish, rightCount} = this.state;
 
 		if(finish){
 			return(
 				<View style={styles.finishBoard}>
 					<Text>Finish</Text>
-					<Text style={{marginTop: 30}}>{`Correct rate = ${rightCount*10000/(count+1)/100}%`}</Text>
-					<TextButton>Go Back</TextButton>
+					<Text style={{marginTop: 30}}>{`Correct rate = ${(rightCount*10000/(count+1)/100).toFixed(2)}%`}</Text>
+					<TextButton
+						onPress={() => this.props.navigation.goBack()}
+					>Go Home</TextButton>
 				</View>
 			)
 		}
@@ -153,10 +141,11 @@ const styles = StyleSheet.create({
   }
 });
 
-function mapStateToProps (decks) {
+function mapStateToProps (decks, { navigation }) {
 	// 需要通过导航传递卡片title,获取对应的问题集
+	const {title} = navigation.state.params;
 	return {
-		card: decks['React']
+		card: decks[title]
 	}
 }
 

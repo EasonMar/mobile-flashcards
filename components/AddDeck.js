@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { addDeck } from '../actions';
 import TextButton from './TextButton';
 import { postDeck } from '../utils/api';
-import { trim } from '../utils/helper';
+import { trim } from '../utils/helpers';
 import { gray, purple, white } from '../utils/colors';
 
 class AddDeck extends Component {
@@ -27,18 +27,20 @@ class AddDeck extends Component {
 			return false;
 		}
 
-		let deck = {
+		const deck = {
 			title: text,
 			questions: []
 		}
 
-		// update DB
+		// update DB --- done
 		postDeck(deck);
 		
 		// update redux --- done
 		dispatch(addDeck(deck))
-		
-		// navigation
+
+		// 失焦
+		this.refs.addInput.blur();
+		this.setState({text: ''});
 	}
 
 	render(){
@@ -50,13 +52,12 @@ class AddDeck extends Component {
 					placeholder={"Enter deck's name"}
 					onChangeText={(text) => this.setState({text})}
         	value={this.state.text}
+        	ref="addInput"
 				/>
 				<TextButton 
 					style={styles.submit}
 					onPress={()=> this.submit()}
 				>Submit</TextButton>
-
-				<Text style={{marginTop:20}}>{JSON.stringify(this.props.decks)}</Text>
 			</View>
 		)
 	}

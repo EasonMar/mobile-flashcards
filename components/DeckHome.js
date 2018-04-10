@@ -5,44 +5,32 @@ import DecksCard from './DecksCard';
 import TextButton from './TextButton';
 import { purple, white } from '../utils/colors'
 
-import { AppLoading } from 'expo';
-import { receiveDecks } from '../actions';
-import { fetchDecks } from '../utils/api';
-
 class DeckHome extends Component {
-
-	// 主要是navigation
-
-	// 这部分在实际中不需要~！
-	state = {
-		ready: false
-	} 
-	
-	componentDidMount(){
-		const {dispatch} = this.props;
-
-		fetchDecks()
-			.then((decks) => dispatch(receiveDecks(decks)))
-			.then(() => this.setState(() => ({ready: true})))
-	} 
 	
 	render() {
-		// ready这部分在实际中不需要~！
-		const { ready } = this.state;
-		if(!ready){
-			return <AppLoading />
-		}
-
-		const {card} = this.props;
+		
+		const {card,navigation} = this.props;
 
 		return(
 			<View style={styles.container}>
 				<DecksCard title={card.title} cardNum={card.questions.length} />
 				<View style={styles.buttomArea}>
-					<TextButton style={styles.add}>Add card</TextButton>
+					<TextButton 
+						style={styles.add}
+						onPress={()=> navigation.navigate(
+							'AddCard',
+							{ title:card.title }
+						)}
+					>Add card</TextButton>
 					{
 						card.questions.length > 0
-						? <TextButton style={styles.quiz}>Start Quiz</TextButton>
+						? <TextButton 
+								style={styles.quiz}
+								onPress={() => navigation.navigate(
+									'Exam',
+									{ title:card.title }
+								)}
+							>Start Quiz</TextButton>
 						: ''
 					}
 				</View>
@@ -71,10 +59,11 @@ const styles = StyleSheet.create({
   }
 })
 
-function mapStateToProps (decks) {
+function mapStateToProps (decks, { navigation }) {
 	// 需要通过导航传递卡片title,获取对应的问题集
+	const {title} = navigation.state.params;
 	return {
-		card: decks['JavaScript']
+		card: decks[title]
 	}
 }
 
